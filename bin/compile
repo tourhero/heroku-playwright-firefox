@@ -10,5 +10,20 @@ BUILDPACK_BROWSERS_INSTALL_PATH=${BUILDPACK_BROWSERS_INSTALL_PATH:-"/browsers"}
 
 export PLAYWRIGHT_BROWSERS_PATH=$BUILD_DIR/$BUILDPACK_BROWSERS_INSTALL_PATH
 
-echo "-----> Installing playwright firefox"
+echo "-----> Installing playwright firefox" # to BUILD_DIR
 npx playwright install firefox
+
+configure_export_env() {
+    echo "-----> Writing profile script"
+    mkdir -p $BUILD_DIR/.profile.d
+    cat << EOF >$BUILD_DIR/.profile.d/002_playwright_overwrite.sh
+export PLAYWRIGHT_BROWSERS_PATH=/app/browsers
+EOF
+
+    # Give environment variable to other buildpacks
+    # echo "export PLAYWRIGHT_BROWSERS_PATH=0" >> "$BP_DIR/export"
+    export PLAYWRIGHT_BROWSERS_PATH=/app/browsers
+}
+
+# Overwrite PLAYWRIGHT_BROWSERS_PATH to /app/browsers
+configure_export_env
