@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "Playwright Firefox"
+exit 0
